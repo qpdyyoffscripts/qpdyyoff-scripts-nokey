@@ -40,49 +40,6 @@ ScreenGui.Name = "QPHub"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-local IntroFrame = Instance.new("Frame", ScreenGui)
-IntroFrame.Size = UDim2.new(1, 0, 1, 0)
-IntroFrame.Position = UDim2.new(0, 0, 0, 0)
-IntroFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-IntroFrame.BackgroundTransparency = 1
-IntroFrame.BorderSizePixel = 0
-IntroFrame.ZIndex = 500
-
-local IntroTitle = Instance.new("TextLabel", IntroFrame)
-IntroTitle.Size = UDim2.new(1, 0, 0, 50)
-IntroTitle.Position = UDim2.new(0, 0, 0.4, 0)
-IntroTitle.Text = "MM2 QPDYYHUB"
-IntroTitle.TextColor3 = Color3.fromRGB(255, 50, 50)
-IntroTitle.Font = Enum.Font.SourceSansBold
-IntroTitle.TextSize = 36
-IntroTitle.BackgroundTransparency = 1
-IntroTitle.ZIndex = 501
-IntroTitle.TextTransparency = 1
-
-local IntroSub = Instance.new("TextLabel", IntroFrame)
-IntroSub.Size = UDim2.new(1, 0, 0, 30)
-IntroSub.Position = UDim2.new(0, 0, 0.5, 0)
-IntroSub.Text = "tg: @qpdyy_off_scripts"
-IntroSub.TextColor3 = Color3.fromRGB(200, 200, 200)
-IntroSub.Font = Enum.Font.SourceSansBold
-IntroSub.TextSize = 18
-IntroSub.BackgroundTransparency = 1
-IntroSub.ZIndex = 501
-IntroSub.TextTransparency = 1
-
-TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0.35}):Play()
-TweenService:Create(IntroTitle, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
-TweenService:Create(IntroSub, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
-
-task.spawn(function()
-    task.wait(2.5)
-    TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
-    TweenService:Create(IntroTitle, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
-    TweenService:Create(IntroSub, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
-    task.wait(0.5)
-    IntroFrame:Destroy()
-end)
-
 local MainFrame = Instance.new("Frame", ScreenGui)
 local defaultSize = UDim2.new(0, 440, 0, 320)
 MainFrame.Size = defaultSize
@@ -103,6 +60,12 @@ TitleBar.Font = Enum.Font.SourceSansBold
 TitleBar.TextSize = 14
 TitleBar.ZIndex = 2
 Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 14)
+
+task.spawn(function()
+    while RunService.RenderStepped:Wait() do
+        TitleBar.TextColor3 = Color3.fromHSV(tick() % 4 / 4, 1, 1)
+    end
+end)
 
 local OpenBtn = Instance.new("TextButton", ScreenGui)
 OpenBtn.Size = UDim2.new(0, 55, 0, 55)
