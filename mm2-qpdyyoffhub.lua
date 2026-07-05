@@ -39,7 +39,6 @@ local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "QPHub"
 ScreenGui.ResetOnSpawn = false
 
--- АНИМИРОВАННОЕ ПОЛУПРОЗРАЧНОЕ ИНТРО
 local IntroFrame = Instance.new("Frame", ScreenGui)
 IntroFrame.Size = UDim2.new(1, 0, 1, 0)
 IntroFrame.Position = UDim2.new(0, 0, 0, 0)
@@ -83,7 +82,6 @@ task.spawn(function()
     IntroFrame:Destroy()
 end)
 
--- ГЛАВНОЕ МЕНЮ
 local MainFrame = Instance.new("Frame", ScreenGui)
 local defaultSize = UDim2.new(0, 440, 0, 320)
 MainFrame.Size = defaultSize
@@ -92,7 +90,6 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
-MainFrame.ClipsDescendants = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
 
 local TitleBar = Instance.new("TextLabel", MainFrame)
@@ -102,15 +99,15 @@ TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TitleBar.Font = Enum.Font.SourceSansBold
 TitleBar.TextSize = 14
+TitleBar.ZIndex = 2
 Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 14)
 
--- СТИЛЬНАЯ ЧЕРНО-БЕЛАЯ КНОПКА-НОЖИК (ЗАМЕНА QP)
 local OpenBtn = Instance.new("TextButton", ScreenGui)
 OpenBtn.Size = UDim2.new(0, 55, 0, 55)
 OpenBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
-OpenBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- Глубокий черный
+OpenBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 OpenBtn.Text = "🔪"
-OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255) -- Белый нож
+OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 OpenBtn.Font = Enum.Font.SourceSansBold
 OpenBtn.TextSize = 24
 OpenBtn.Visible = false
@@ -119,7 +116,7 @@ OpenBtn.Draggable = true
 OpenBtn.ZIndex = 500
 Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 50)
 local OpenBorder = Instance.new("UIStroke", OpenBtn)
-OpenBorder.Color = Color3.fromRGB(240, 240, 240) -- Белая аккуратная обводка
+OpenBorder.Color = Color3.fromRGB(240, 240, 240)
 OpenBorder.Width = 2
 
 local MinimizeBtn = Instance.new("TextButton", MainFrame)
@@ -131,6 +128,7 @@ MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 MinimizeBtn.Font = Enum.Font.SourceSansBold
 MinimizeBtn.TextSize = 18
 MinimizeBtn.BorderSizePixel = 0
+MinimizeBtn.ZIndex = 3
 Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 50)
 
 local CloseBtn = Instance.new("TextButton", MainFrame)
@@ -142,9 +140,9 @@ CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseBtn.Font = Enum.Font.SourceSansBold
 CloseBtn.TextSize = 14
 CloseBtn.BorderSizePixel = 0
+CloseBtn.ZIndex = 3
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 50)
 
--- УСТОЙЧИВАЯ ЛОГИКА АНИМАЦИИ ОКНА
 local isTweening = false
 
 local function toggleUI(open)
@@ -153,7 +151,7 @@ local function toggleUI(open)
     
     if not open then
         local targetPos = OpenBtn.Position
-        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
             Size = UDim2.new(0, 0, 0, 0),
             Position = UDim2.new(targetPos.X.Scale, targetPos.X.Offset + 27, targetPos.Y.Scale, targetPos.Y.Offset + 27)
         })
@@ -165,8 +163,8 @@ local function toggleUI(open)
             OpenBorder.Transparency = 1
             OpenBtn.Visible = true
             
-            TweenService:Create(OpenBtn, TweenInfo.new(0.25), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
-            TweenService:Create(OpenBorder, TweenInfo.new(0.25), {Transparency = 0}):Play()
+            TweenService:Create(OpenBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+            TweenService:Create(OpenBorder, TweenInfo.new(0.2), {Transparency = 0}):Play()
             isTweening = false
         end)
     else
@@ -174,10 +172,10 @@ local function toggleUI(open)
         MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + 27, startPos.Y.Scale, startPos.Y.Offset + 27)
         MainFrame.Visible = true
         
-        TweenService:Create(OpenBtn, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
-        TweenService:Create(OpenBorder, TweenInfo.new(0.2), {Transparency = 1}):Play()
+        TweenService:Create(OpenBtn, TweenInfo.new(0.15), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+        TweenService:Create(OpenBorder, TweenInfo.new(0.15), {Transparency = 1}):Play()
         
-        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
             Size = defaultSize,
             Position = UDim2.new(0.5, -defaultSize.X.Offset/2, 0.5, -defaultSize.Y.Offset/2)
         })
@@ -205,9 +203,8 @@ OpenBtn.TouchTap:Connect(onOpenTriggered)
 CloseBtn.MouseButton1Click:Connect(function()
     if isTweening then return end
     isTweening = true
-    local tweenClose = TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-        Size = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1
+    local tweenClose = TweenService:Create(MainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0)
     })
     tweenClose:Play()
     tweenClose.Completed:Connect(function()
@@ -215,7 +212,6 @@ CloseBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
--- ВКЛАДКИ С ИКОНКАМИ
 local tabs = {
     {Name = "Player", Icon = "👤"},
     {Name = "ESP", Icon = "🎯"},
@@ -228,6 +224,7 @@ local TabFrame = Instance.new("Frame", MainFrame)
 TabFrame.Size = UDim2.new(0, 110, 1, -55)
 TabFrame.Position = UDim2.new(0, 5, 0, 50)
 TabFrame.BackgroundTransparency = 1
+TabFrame.ZIndex = 2
 
 for i, tabData in ipairs(tabs) do
     local tName = tabData.Name
@@ -239,6 +236,7 @@ for i, tabData in ipairs(tabs) do
     TabBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
     TabBtn.Font = Enum.Font.SourceSansBold
     TabBtn.TextSize = 13
+    TabBtn.ZIndex = 3
     Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
 
     local PageContainer = Instance.new("ScrollingFrame", MainFrame)
@@ -249,6 +247,7 @@ for i, tabData in ipairs(tabs) do
     PageContainer.CanvasSize = UDim2.new(0, 0, 0, 400)
     PageContainer.Visible = false
     PageContainer.ScrollBarThickness = 2
+    PageContainer.ZIndex = 2
     pages[tName] = PageContainer
 
     if i == 1 then
@@ -271,7 +270,6 @@ for i, tabData in ipairs(tabs) do
     end)
 end
 
--- КОНСТРУКТОР КНОПОК
 local function createButton(tab, name, y, flag)
     local b = Instance.new("TextButton", pages[tab])
     b.Size = UDim2.new(1, -10, 0, 38)
@@ -282,6 +280,7 @@ local function createButton(tab, name, y, flag)
     b.Font = Enum.Font.SourceSansBold
     b.TextSize = 14
     b.BorderSizePixel = 0
+    b.ZIndex = 3
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
 
     b.MouseButton1Click:Connect(function()
@@ -300,7 +299,6 @@ createButton("Player", "Fling Mode", 140, "Fling")
 createButton("ESP", "Activate ESP", 5, "ESP")
 createButton("ESP", "Highlight Gun", 50, "HG")
 
--- КОНСТРУКТОР ПОЛЗУНКОВ
 local function createSlider(tab, name, y, min, max, def, flag)
     local lab = Instance.new("TextLabel", pages[tab])
     lab.Size = UDim2.new(1, -10, 0, 20)
@@ -310,18 +308,21 @@ local function createSlider(tab, name, y, min, max, def, flag)
     lab.TextColor3 = Color3.fromRGB(200, 200, 200)
     lab.Font = Enum.Font.SourceSansBold
     lab.TextSize = 12
+    lab.ZIndex = 3
 
     local bg = Instance.new("Frame", pages[tab])
     bg.Size = UDim2.new(1, -20, 0, 8)
     bg.Position = UDim2.new(0, 10, 0, y + 22)
     bg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     bg.BorderSizePixel = 0
+    bg.ZIndex = 3
     Instance.new("UICorner", bg)
 
     local fil = Instance.new("Frame", bg)
     fil.Size = UDim2.new((def - min) / (max - min), 0, 1, 0)
     fil.BackgroundColor3 = Color3.fromRGB(0, 160, 100)
     fil.BorderSizePixel = 0
+    fil.ZIndex = 3
     Instance.new("UICorner", fil)
 
     local btn = Instance.new("TextButton", bg)
@@ -329,6 +330,7 @@ local function createSlider(tab, name, y, min, max, def, flag)
     btn.Position = UDim2.new((def - min) / (max - min), -7, 0, -3)
     btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     btn.Text = ""
+    btn.ZIndex = 4
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 50)
 
     local drag = false
@@ -377,6 +379,7 @@ local function createSlider(tab, name, y, min, max, def, flag)
     ab.TextColor3 = Color3.fromRGB(255, 255, 255)
     ab.Font = Enum.Font.SourceSansBold
     ab.TextSize = 13
+    ab.ZIndex = 3
     Instance.new("UICorner", ab).CornerRadius = UDim.new(0, 6)
 
     ab.MouseButton1Click:Connect(function()
@@ -400,7 +403,6 @@ end
 createSlider("Player", "Speedhack", 185, 5, 100, 16, "S")
 createSlider("Player", "FOV Config", 255, 70, 120, 70, "F")
 
--- ЛОГИКА ТЕЛЕПОРТА
 local function getPlayerRole(p)
     local b = p:FindFirstChild("Backpack")
     local ch = p.Character
@@ -429,6 +431,7 @@ local function createTpButton(name, y, targetMode)
     b.TextColor3 = Color3.fromRGB(230, 230, 230)
     b.Font = Enum.Font.SourceSansBold
     b.TextSize = 14
+    b.ZIndex = 3
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
 
     b.MouseButton1Click:Connect(function()
@@ -455,13 +458,11 @@ createTpButton("Teleport to Murderer", 5, "M")
 createTpButton("Teleport to Sheriff", 50, "S")
 createTpButton("Teleport to Random Player", 95, "R")
 
--- Вкладка Эффектов
 createButton("Effects", "Psycho Sky", 5, "Psy")
 createButton("Effects", "Colored Fog", 50, "Fog")
 createSlider("Effects", "Time of Day", 95, 0, 23, 14, "T")
 createSlider("Effects", "Brightness", 165, 0, 10, 2, "B")
 
--- РЕСАЙЗ МЕНЮ
 local ResizeArea = Instance.new("Frame", MainFrame)
 ResizeArea.Size = UDim2.new(0, 16, 0, 16)
 ResizeArea.Position = UDim2.new(1, -16, 1, -16)
@@ -499,7 +500,6 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- ИСПРАВЛЕННЫЙ ЦИКЛ ESP (БЕЗ МИГАНИЙ)
 local function applyESP(player)
     if player == LocalPlayer then return end
     
@@ -533,7 +533,6 @@ end
 for _, p in ipairs(Players:GetPlayers()) do applyESP(p) end
 Players.PlayerAdded:Connect(applyESP)
 
--- Динамическое обновление состояния ESP без пересоздания объектов
 task.spawn(function()
     while task.wait(0.3) do
         for _, p in ipairs(Players:GetPlayers()) do
@@ -556,7 +555,6 @@ task.spawn(function()
     end
 end)
 
--- ОСТАЛЬНЫЕ ИГРОВЫЕ ЦИКЛЫ
 task.spawn(function()
     while task.wait(0.1) do
         if Flags.InfJump and LocalPlayer.Character then
