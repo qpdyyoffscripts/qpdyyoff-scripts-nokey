@@ -39,11 +39,12 @@ local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "QPHub"
 ScreenGui.ResetOnSpawn = false
 
--- АНИМИРОВАННОЕ ИНТРО
+-- АНИМИРОВАННОЕ ПОЛУПРОЗРАЧНОЕ ИНТРО
 local IntroFrame = Instance.new("Frame", ScreenGui)
 IntroFrame.Size = UDim2.new(1, 0, 1, 0)
 IntroFrame.Position = UDim2.new(0, 0, 0, 0)
 IntroFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+IntroFrame.BackgroundTransparency = 1 -- Стартует невидимым для твина
 IntroFrame.BorderSizePixel = 0
 IntroFrame.ZIndex = 100
 
@@ -56,6 +57,7 @@ IntroTitle.Font = Enum.Font.SourceSansBold
 IntroTitle.TextSize = 36
 IntroTitle.BackgroundTransparency = 1
 IntroTitle.ZIndex = 101
+IntroTitle.TextTransparency = 1
 
 local IntroSub = Instance.new("TextLabel", IntroFrame)
 IntroSub.Size = UDim2.new(1, 0, 0, 30)
@@ -66,12 +68,9 @@ IntroSub.Font = Enum.Font.SourceSansBold
 IntroSub.TextSize = 18
 IntroSub.BackgroundTransparency = 1
 IntroSub.ZIndex = 101
-
-IntroTitle.TextTransparency = 1
 IntroSub.TextTransparency = 1
-IntroFrame.BackgroundTransparency = 1
 
-TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0.35}):Play() -- Черно-прозрачный фон
 TweenService:Create(IntroTitle, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
 TweenService:Create(IntroSub, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
 
@@ -86,12 +85,14 @@ end)
 
 -- ГЛАВНОЕ МЕНЮ
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 440, 0, 320)
-MainFrame.Position = UDim2.new(0.2, 0, 0.2, 0)
+local defaultSize = UDim2.new(0, 440, 0, 320)
+MainFrame.Size = defaultSize
+MainFrame.Position = UDim2.new(0.5, -220, 0.5, -160)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
+MainFrame.ClipsDescendants = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
 
 local TitleBar = Instance.new("TextLabel", MainFrame)
@@ -115,6 +116,8 @@ OpenBtn.TextSize = 18
 OpenBtn.Visible = false
 OpenBtn.Active = true
 OpenBtn.Draggable = true
+OpenBtn.BackgroundTransparency = 1
+OpenBtn.TextTransparency = 1
 Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 50)
 
 local MinimizeBtn = Instance.new("TextButton", MainFrame)
@@ -139,36 +142,83 @@ CloseBtn.TextSize = 14
 CloseBtn.BorderSizePixel = 0
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 50)
 
+-- АНИМАЦИИ СВЕРНУТЬ / ЗАКРЫТЬ
+local isTweening = false
+
 MinimizeBtn.MouseButton1Click:Connect(function()
-    OpenBtn.Position = MainFrame.Position
-    MainFrame.Visible = false
-    OpenBtn.Visible = true
+    if isTweening then return end
+    isTweening = true
+    
+    local targetPos = OpenBtn.Position
+    local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0),
+        Position = UDim2.new(targetPos.X.Scale, targetPos.X.Offset + 25, targetPos.Y.Scale, targetPos.Y.Offset + 25)
+    })
+    
+    tweenMain:Play()
+    tweenMain.Completed:Connect(function()
+        MainFrame.Visible = false
+        OpenBtn.Visible = true
+        TweenService:Create(OpenBtn, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+        isTweening = false
+    end)
 end)
 
 OpenBtn.MouseButton1Click:Connect(function()
-    MainFrame.Position = OpenBtn.Position
-    OpenBtn.Visible = false
+    if isTweening then return end
+    isTweening = true
+    
+    local startPos = OpenBtn.Position
+    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + 25, startPos.Y.Scale, startPos.Y.Offset + 25)
     MainFrame.Visible = true
+    
+    TweenService:Create(OpenBtn, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+    task.wait(0.1)
+    OpenBtn.Visible = false
+    
+    local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = defaultSize,
+        Position = UDim2.new(0.5, -220, 0.5, -160)
+    })
+    tweenMain:Play()
+    tweenMain.Completed:Connect(function()
+        isTweening = false
+    end)
 end)
 
 CloseBtn.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
+    if isTweening then return end
+    isTweening = true
+    local tweenClose = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0),
+        BackgroundTransparency = 1
+    })
+    tweenClose:Play()
+    tweenClose.Completed:Connect(function()
+        ScreenGui:Destroy()
+    end)
 end)
 
--- ВКЛАДКИ И КАТЕГОРИИ
-local tabs = {"Player", "ESP", "Teleport", "Effects"}
+-- ВКЛАДКИ С ИКОНКАМИ
+local tabs = {
+    {Name = "Player", Icon = "👤"},
+    {Name = "ESP", Icon = "🎯"},
+    {Name = "Teleport", Icon = "🌀"},
+    {Name = "Effects", Icon = "✨"}
+}
 local pages = {}
 
 local TabFrame = Instance.new("Frame", MainFrame)
-TabFrame.Size = UDim2.new(0, 100, 1, -55)
+TabFrame.Size = UDim2.new(0, 110, 1, -55)
 TabFrame.Position = UDim2.new(0, 5, 0, 50)
 TabFrame.BackgroundTransparency = 1
 
-for i, tName in ipairs(tabs) do
+for i, tabData in ipairs(tabs) do
+    local tName = tabData.Name
     local TabBtn = Instance.new("TextButton", TabFrame)
     TabBtn.Size = UDim2.new(1, -5, 0, 35)
     TabBtn.Position = UDim2.new(0, 0, 0, (i - 1) * 40)
-    TabBtn.Text = tName
+    TabBtn.Text = tabData.Icon .. " " .. tName
     TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     TabBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
     TabBtn.Font = Enum.Font.SourceSansBold
@@ -176,8 +226,8 @@ for i, tName in ipairs(tabs) do
     Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
 
     local PageContainer = Instance.new("ScrollingFrame", MainFrame)
-    PageContainer.Size = UDim2.new(1, -120, 1, -60)
-    PageContainer.Position = UDim2.new(0, 110, 0, 50)
+    PageContainer.Size = UDim2.new(1, -130, 1, -60)
+    PageContainer.Position = UDim2.new(0, 120, 0, 50)
     PageContainer.BackgroundTransparency = 1
     PageContainer.BorderSizePixel = 0
     PageContainer.CanvasSize = UDim2.new(0, 0, 0, 400)
@@ -395,7 +445,7 @@ createButton("Effects", "Colored Fog", 50, "Fog")
 createSlider("Effects", "Time of Day", 95, 0, 23, 14, "T")
 createSlider("Effects", "Brightness", 165, 0, 10, 2, "B")
 
--- РЕСАЙЗ МЕНЮ (ИЗМЕНЕНИЕ РАЗМЕРА)
+-- РЕСАЙЗ МЕНЮ
 local ResizeArea = Instance.new("Frame", MainFrame)
 ResizeArea.Size = UDim2.new(0, 16, 0, 16)
 ResizeArea.Position = UDim2.new(1, -16, 1, -16)
@@ -416,6 +466,7 @@ end)
 UserInputService.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         isResizing = false
+        defaultSize = MainFrame.Size
     end
 end)
 
@@ -425,14 +476,14 @@ UserInputService.InputChanged:Connect(function(input)
         local nextWidth = math.clamp(startSize.X.Offset + delta.X, 300, 600)
         local nextHeight = math.clamp(startSize.Y.Offset + delta.Y, 250, 500)
         MainFrame.Size = UDim2.new(0, nextWidth, 0, nextHeight)
-        TabFrame.Size = UDim2.new(0, 100, 1, -55)
+        TabFrame.Size = UDim2.new(0, 110, 1, -55)
         for _, p in pairs(pages) do
-            p.Size = UDim2.new(1, -120, 1, -60)
+            p.Size = UDim2.new(1, -130, 1, -60)
         end
     end
 end)
 
--- ГЛАВНЫЕ ИГРОВЫЕ ЦИКЛЫ (ESP, FLY, NOCLIP, FLING)
+-- ГЛАВНЫЕ ИГРОВЫЕ ЦИКЛЫ (ESP, ИСПРАВЛЕННЫЙ FLING, МОБИЛЬНЫЙ FLY)
 task.spawn(function()
     while task.wait(0.5) do
         if Flags.ESP or Flags.HG then
@@ -495,11 +546,14 @@ RunService.Stepped:Connect(function()
     local hum = character:FindFirstChildOfClass("Humanoid")
     local root = character:FindFirstChild("HumanoidRootPart")
 
+    -- СТАБИЛЬНЫЙ ФЛИНГ (Крутит вокруг оси, расталкивая других, не улетая)
     if Flags.Fling and root then
-        root.Velocity = Vector3.new(0, 50000, 0)
         root.RotVelocity = Vector3.new(0, 50000, 0)
+        -- Убираем дикую линейную скорость по оси Y, чтобы не улетать вверх
+        root.Velocity = Vector3.new(root.Velocity.X, 0, root.Velocity.Z) 
     end
 
+    -- УД ОБНЫЙ НАПРАВЛЕННЫЙ ПОЛЕТ ДЛЯ ТЕЛЕФОНА (По вектору движения джойстика)
     if Flags.Fly and root and hum then
         if not bodyVel then
             bodyVel = Instance.new("BodyVelocity", root)
@@ -509,7 +563,22 @@ RunService.Stepped:Connect(function()
         end
         bodyGyro.CFrame = workspace.CurrentCamera.CFrame
         hum.PlatformStand = true
-        bodyVel.Velocity = hum.MoveDirection.Magnitude > 0 and workspace.CurrentCamera.CFrame.LookVector * flySpeed or Vector3.new(0, 0, 0)
+        
+        -- Считываем MoveDirection (куда направлен виртуальный джойстик на мобильном)
+        if hum.MoveDirection.Magnitude > 0 then
+            -- Направление полета формируется на основе взгляда камеры и направления движения стика
+            local camCFrame = workspace.CurrentCamera.CFrame
+            local direction = camCFrame:VectorToWorldSpace(Vector3.new(hum.MoveDirection.X, 0, hum.MoveDirection.Z))
+            
+            -- Если игрок зажимает прыжок/кнопку вверх, летим выше
+            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                direction = direction + Vector3.new(0, 1, 0)
+            end
+            
+            bodyVel.Velocity = direction.Unit * flySpeed
+        else
+            bodyVel.Velocity = Vector3.new(0, 0, 0)
+        end
     else
         if bodyVel then bodyVel:Destroy(); bodyVel = nil end
         if bodyGyro then bodyGyro:Destroy(); bodyGyro = nil end
