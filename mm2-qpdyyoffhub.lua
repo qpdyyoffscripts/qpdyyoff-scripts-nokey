@@ -1,1 +1,534 @@
-local P,LP,RS,TS,U,L=game:GetService("Players"),game:GetService("Players").LocalPlayer,game:GetService("RunService"),game:GetService("TweenService"),game:GetService("UserInputService"),game:GetService("Lighting")local C,F,fs,rs,fv,tD,lB={M=Color3.fromRGB(255,50,50),S=Color3.fromRGB(0,200,255),I=Color3.fromRGB(50,255,50)},{ESP=false,HG=false,Fly=false,Noclip=false,InfJump=false,Fling=false,SpdOn=false,FovOn=false,Fog=false,Psy=false},45,16,70,14,2 local pg=LP:WaitForChild("PlayerGui")if pg:FindFirstChild("QPHub")then pg.QPHub:Destroy()end local sg=Instance.new("ScreenGui",pg)sg.Name="QPHub"sg.ResetOnSpawn=false local int=Instance.new("Frame",sg)int.Size,int.Position,int.BackgroundColor3,int.BorderSizePixel,int.ZIndex=UDim2.new(1,0,1,0),UDim2.new(0,0,0,0),Color3.fromRGB(15,15,15),0,100 local it1=Instance.new("TextLabel",int)it1.Size,it1.Position,it1.Text,it1.TextColor3,it1.Font,it1.TextSize,it1.BackgroundTransparency,it1.ZIndex=UDim2.new(1,0,0,50),UDim2.new(0,0,0.4,0),"MM2 QPDYYHUB",Color3.fromRGB(255,50,50),3,36,1,101 local it2=Instance.new("TextLabel",int)it2.Size,it2.Position,it2.Text,it2.TextColor3,it2.Font,it2.TextSize,it2.BackgroundTransparency,it2.ZIndex=UDim2.new(1,0,0,30),UDim2.new(0,0,0.5,0),"tg: @qpdyy_off_scripts",Color3.fromRGB(200,200,200),3,18,1,101 it1.TextTransparency,it2.TextTransparency,int.BackgroundTransparency=1,1,1 TS:Create(int,TweenInfo.new(0.5),{BackgroundTransparency=0}):Play()TS:Create(it1,TweenInfo.new(0.5),{TextTransparency=0}):Play()TS:Create(it2,TweenInfo.new(0.5),{TextTransparency=0}):Play()task.spawn(function()task.wait(2.5)TS:Create(int,TweenInfo.new(0.5),{BackgroundTransparency=1}):Play()TS:Create(it1,TweenInfo.new(0.5),{TextTransparency=1}):Play()TS:Create(it2,TweenInfo.new(0.5),{TextTransparency=1}):Play()task.wait(0.5)int:Destroy()end)local fr=Instance.new("Frame",sg)fr.Size,fr.Position,fr.BackgroundColor3,fr.BorderSizePixel,fr.Active,fr.Draggable=UDim2.new(0,440,0,320),UDim2.new(0.2,0,0.2,0),Color3.fromRGB(20,20,20),0,true,true Instance.new("UICorner",fr).CornerRadius=UDim.new(0,14)local tl=Instance.new("TextLabel",fr)tl.Size,tl.Text,tl.TextColor3,tl.BackgroundColor3,tl.Font,tl.TextSize=UDim2.new(1,0,0,45),"tg: @qpdyy_off_scripts",Color3.fromRGB(255,255,255),Color3.fromRGB(30,30,30),3,14 Instance.new("UICorner",tl).CornerRadius=UDim.new(0,14)local btnO=Instance.new("TextButton",sg)btnO.Size,btnO.Position,btnO.BackgroundColor3,btnO.Text,btnO.TextColor3,btnO.Font,btnO.TextSize,btnO.Visible=UDim2.new(0,50,0,50),UDim2.new(0.05,0,0.2,0),Color3.fromRGB(25,25,25),"QP",Color3.fromRGB(255,255,255),3,18,false Instance.new("UICorner",btnO).CornerRadius=UDim.new(0,50)btnO.Active,btnO.Draggable=true,true local btnM=Instance.new("TextButton",fr)btnM.Size,btnM.Position,btnM.Text,btnM.BackgroundColor3,btnM.TextColor3,btnM.Font,btnM.TextSize,btnM.BorderSizePixel=UDim2.new(0,26,0,26),UDim2.new(1,-62,0,9),"-",Color3.fromRGB(45,45,45),Color3.fromRGB(255,255,255),3,18,0 Instance.new("UICorner",btnM).CornerRadius=UDim.new(0,50)local btnC=Instance.new("TextButton",fr)btnC.Size,btnC.Position,btnC.Text,btnC.BackgroundColor3,btnC.TextColor3,btnC.Font,btnC.TextSize,btnC.BorderSizePixel=UDim2.new(0,26,0,26),UDim2.new(1,-32,0,9),"X",Color3.fromRGB(90,35,35),Color3.fromRGB(255,255,255),3,14,0 Instance.new("UICorner",btnC).CornerRadius=UDim.new(0,50)btnM.MouseButton1Click:Connect(function()btnO.Position=fr.Position fr.Visible=false btnO.Visible=true end)btnO.MouseButton1Click:Connect(function()fr.Position=btnO.Position btnO.Visible=false fr.Visible=true end)btnC.MouseButton1Click:Connect(function()sg:Destroy()end)local tabs={"Player","ESP","Teleport","Effects"}local pages={}local tabFr=Instance.new("Frame",fr)tabFr.Size,tabFr.Position,tabFr.BackgroundTransparency=UDim2.new(0,100,1,-55),UDim2.new(0,5,0,50),1 for i,tName in ipairs(tabs)do local tB=Instance.new("TextButton",tabFr)tB.Size,tB.Position,tB.Text,tB.BackgroundColor3,tB.TextColor3,tB.Font,tB.TextSize=UDim2.new(1,-5,0,35),UDim2.new(0,0,0,(i-1)*40),tName,Color3.fromRGB(30,30,30),Color3.fromRGB(180,180,180),3,13 Instance.new("UICorner",tB).CornerRadius=UDim.new(0,6)local pgF=Instance.new("ScrollingFrame",fr)pgF.Size,pgF.Position,pgF.BackgroundTransparency,pgF.BorderSizePixel,pgF.CanvasSize,pgF.Visible=UDim2.new(1,-120,1,-60),UDim2.new(0,110,0,50),1,0,UDim2.new(0,0,0,400),false pgF.ScrollBarThickness=2 pages[tName]=pgF if i==1 then pgF.Visible=true tB.BackgroundColor3=Color3.fromRGB(50,50,50)tB.TextColor3=Color3.fromRGB(255,255,255)end tB.MouseButton1Click:Connect(function()for _,p in pairs(pages)do p.Visible=false end pgF.Visible=true for _,b in ipairs(tabFr:GetChildren())do if b:IsA("TextButton")then b.BackgroundColor3=Color3.fromRGB(30,30,30)b.TextColor3=Color3.fromRGB(180,180,180)end end tB.BackgroundColor3=Color3.fromRGB(50,50,50)tB.TextColor3=Color3.fromRGB(255,255,255)end)end local function cB(t,n,y,f)local b=Instance.new("TextButton",pages[t])b.Size,b.Position,b.Text,b.BackgroundColor3,b.TextColor3,b.Font,b.TextSize,b.BorderSizePixel=UDim2.new(1,-10,0,38),UDim2.new(0,5,0,y),n,Color3.fromRGB(35,35,35),Color3.fromRGB(200,200,200),3,14,0 Instance.new("UICorner",b).CornerRadius=UDim.new(0,8)b.MouseButton1Click:Connect(function()F[f]=not F[f]local c=F[f]and Color3.fromRGB(46,117,89)or Color3.fromRGB(35,35,35)TS:Create(b,TweenInfo.new(0.2),{BackgroundColor3=c}):Play()end)return b end cB("Player","Fly Control",5,"Fly")cB("Player","Noclip Walls",50,"Noclip")cB("Player","Infinite Jump",95,"InfJump")cB("Player","Fling Mode",140,"Fling")cB("ESP","Activate ESP",5,"ESP")cB("ESP","Highlight Gun",50,"HG")local function cS(t,n,y,min,max,def,f)local lab=Instance.new("TextLabel",pages[t])lab.Size,lab.Position,lab.Text,lab.BackgroundTransparency,lab.TextColor3,lab.Font,lab.TextSize=UDim2.new(1,-10,0,20),UDim2.new(0,5,0,y),n..": "..def,1,Color3.fromRGB(200,200,200),3,12 local bg=Instance.new("Frame",pages[t])bg.Size,bg.Position,bg.BackgroundColor3,bg.BorderSizePixel=UDim2.new(1,-20,0,8),UDim2.new(0,10,0,y+22),Color3.fromRGB(45,45,45),0 Instance.new("UICorner",bg)local fil=Instance.new("Frame",bg)fil.Size,fil.BackgroundColor3,fil.BorderSizePixel=UDim2.new((def-min)/(max-min),0,1,0),Color3.fromRGB(0,160,100),0 Instance.new("UICorner",fil)local btn=Instance.new("TextButton",bg)btn.Size,btn.Position,btn.BackgroundColor3,btn.Text=UDim2.new(0,14,0,14),UDim2.new((def-min)/(max-min),-7,0,-3),Color3.fromRGB(255,255,255),""Instance.new("UICorner",btn).CornerRadius=UDim.new(0,50)local drag=false btn.InputBegan:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then drag=true end end)U.InputEnded:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then drag=false end end)U.InputChanged:Connect(function(i)if drag and(i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch)then local cp=i.Position.X local gp=bg.AbsolutePosition.X local gw=bg.AbsoluteSize.X local pct=math.clamp((cp-gp)/gw,0,1)btn.Position=UDim2.new(pct,-7,0,-3)fil.Size=UDim2.new(pct,0,1,0)local val=math.floor(min+(max-min)*pct)lab.Text=n..": "..val if f=="S" then rs=val elseif f=="F" then fv=val elseif f=="T" then tD=val elseif f=="B" then lB=val end if F.SpdOn and f=="S" and LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")then LP.Character:FindFirstChildOfClass("Humanoid").WalkSpeed=rs end if F.FovOn and f=="F" then workspace.CurrentCamera.FieldOfView=fv end if f=="T" then L.TimeOfDay=tD..":00:00"end if f=="B" then L.Brightness=lB end end end)local ab=Instance.new("TextButton",pages[t])ab.Size,ab.Position,ab.Text,ab.BackgroundColor3,ab.TextColor3,ab.Font,ab.TextSize=UDim2.new(1,-10,0,30),UDim2.new(0,5,0,y+35),"Apply "..n,Color3.fromRGB(50,50,50),Color3.fromRGB(255,255,255),3,13 Instance.new("UICorner",ab).CornerRadius=UDim.new(0,6)ab.MouseButton1Click:Connect(function()local act=false if f=="S" then F.SpdOn=not F.SpdOn act=F.SpdOn if LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")then LP.Character:FindFirstChildOfClass("Humanoid").WalkSpeed=act and rs or 16 end elseif f=="F" then F.FovOn=not F.FovOn act=F.FovOn workspace.CurrentCamera.FieldOfView=act and fv or 70 end local c=act and Color3.fromRGB(46,117,89)or Color3.fromRGB(50,50,50)TS:Create(ab,TweenInfo.new(0.2),{BackgroundColor3=c}):Play()end)end cS("Player","Speedhack",185,5,100,16,"S") cS("Player","FOV Config",255,70,120,70,"F")local function gR(p)local b,ch=p:FindFirstChild("Backpack"),p.Character if(b and b:FindFirstChild("Knife"))or(ch and ch:FindFirstChild("Knife"))then return "M"end if(b and b:FindFirstChild("Gun"))or(ch and ch:FindFirstChild("Gun"))then return "S"end return "I"end local function tpTo(role)for _,p in ipairs(P:GetPlayers())do if p~=LP and p.Character and p.Character:FindFirstChild("HumanoidRootPart")then if gR(p)==role then LP.Character.HumanoidRootPart.CFrame=p.Character.HumanoidRootPart.CFrame*CFrame.new(0,3,0)return end end end end local function cT(n,y,r)local b=Instance.new("TextButton",pages["Teleport"])b.Size,b.Position,b.Text,b.BackgroundColor3,b.TextColor3,b.Font,b.TextSize=UDim2.new(1,-10,0,38),UDim2.new(0,5,0,y),n,Color3.fromRGB(35,35,35),Color3.fromRGB(230,230,230),3,14 Instance.new("UICorner",b).CornerRadius=UDim.new(0,8)b.MouseButton1Click:Connect(function()if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")then if r=="R"then local pl=P:GetPlayers()if #pl>1 then local rp=pl[math.random(1,#pl)]while rp==LP do rp=pl[math.random(1,#pl)]end if rp.Character and rp.Character:FindFirstChild("HumanoidRootPart")then LP.Character.HumanoidRootPart.CFrame=rp.Character.HumanoidRootPart.CFrame*CFrame.new(0,3,0)end end else tpTo(r)end end end)end cT("Teleport to Murderer",5,"M")cT("Teleport to Sheriff",50,"S")cT("Teleport to Random Player",95,"R")cB("Effects","Psycho Sky",5,"Psy")cB("Effects","Colored Fog",50,"Fog")cS("Effects","Time of Day",95,0,23,14,"T")cS("Effects","Brightness",165,0,10,2,"B")local resz=Instance.new("Frame",fr)resz.Size,resz.Position,resz.BackgroundTransparency,resz.ZIndex=UDim2.new(0,16,0,16),UDim2.new(1,-16,1,-16),1,10 local rd=false local startS,startP resz.InputBegan:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then rd=true startS=fr.Size startP=i.Position end end)U.InputEnded:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then rd=false end end)U.InputChanged:Connect(function(i)if rd and(i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch)then local delta=i.Position-startP local nw=math.clamp(startS.X.Offset+delta.X,300,600)local nh=math.clamp(startS.Y.Offset+delta.Y,250,500)fr.Size=UDim2.new(0,nw,0,nh)tabFr.Size=UDim2.new(0,100,1,-55)for _,p in pairs(pages)do p.Size=UDim2.new(1,-120,1,-60)end end end)task.spawn(function()while task.wait(0.5)do if F.ESP or F.HG then for _,p in ipairs(P:GetPlayers())do if p~=LP and p.Character then local ch=p.Character local h=ch:FindFirstChild("ESPH")local r=gR(p)if(F.ESP)or(F.HG and r=="S")then if not h and ch:FindFirstChild("HumanoidRootPart")then h=Instance.new("Highlight",ch)h.Name,h.FillTransparency,h.OutlineTransparency="ESPH",0.4,0 end if h then local col=C[r]if F.HG and r=="S" then col=C.S end h.FillColor,h.OutlineColor=col,col end else if h then h:Destroy()end end end end else for _,p in ipairs(P:GetPlayers())do if p.Character and p.Character:FindFirstChild("ESPH")then p.Character.ESPH:Destroy()end end end end end)task.spawn(function()while task.wait(0.1)do if F.InfJump and LP.Character then local h=LP.Character:FindFirstChildOfClass("Humanoid")if h and h.Jump then h:ChangeState(Enum.HumanoidStateType.Jumping)end end end end)local bv,bg RS.Stepped:Connect(function()local ch=LP.Character if not ch then return end if F.Noclip then for _,part in ipairs(ch:GetChildren())do if part:IsA("BasePart")then part.CanCollide=false end end end local h=ch:FindFirstChildOfClass("Humanoid")local r=ch:FindFirstChild("HumanoidRootPart")if F.Fling and r then r.Velocity=Vector3.new(0,50000,0)r.RotVelocity=Vector3.new(0,50000,0)end if F.Fly and r and h then if not bv then bv=Instance.new("BodyVelocity",r)bv.MaxForce=Vector3.new(1e5,1e5,1e5)bg=Instance.new("BodyGyro",r)bg.MaxTorque=Vector3.new(1e5,1e5,1e5)end bg.CFrame=workspace.CurrentCamera.CFrame h.PlatformStand=true bv.Velocity=h.MoveDirection.Magnitude>0 and workspace.CurrentCamera.CFrame.LookVector*fs or Vector3.new(0,0,0)else if bv then bv:Destroy()bv=nil end if bg then bg:Destroy()bg=nil end if h and h.PlatformStand then h.PlatformStand=false end end end)task.spawn(function()while task.wait(0.1)do if F.Fog then L.FogEnd=150 L.FogColor=Color3.fromHSV(tick()%5/5,1,1)else L.FogEnd=100000 end if F.Psy then L.Ambient=Color3.fromHSV(tick()%3/3,1,1)else L.Ambient=Color3.fromRGB(128,128,128)end end end)
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+
+local Colors = {
+    M = Color3.fromRGB(255, 50, 50),
+    S = Color3.fromRGB(0, 200, 255),
+    I = Color3.fromRGB(50, 255, 50)
+}
+
+local Flags = {
+    ESP = false,
+    HG = false,
+    Fly = false,
+    Noclip = false,
+    InfJump = false,
+    Fling = false,
+    SpdOn = false,
+    FovOn = false,
+    Fog = false,
+    Psy = false
+}
+
+local flySpeed = 45
+local walkSpeedValue = 16
+local fovValue = 70
+local timeOfDayValue = 14
+local brightnessValue = 2
+
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+if PlayerGui:FindFirstChild("QPHub") then 
+    PlayerGui.QPHub:Destroy() 
+end
+
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+ScreenGui.Name = "QPHub"
+ScreenGui.ResetOnSpawn = false
+
+-- АНИМИРОВАННОЕ ИНТРО
+local IntroFrame = Instance.new("Frame", ScreenGui)
+IntroFrame.Size = UDim2.new(1, 0, 1, 0)
+IntroFrame.Position = UDim2.new(0, 0, 0, 0)
+IntroFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+IntroFrame.BorderSizePixel = 0
+IntroFrame.ZIndex = 100
+
+local IntroTitle = Instance.new("TextLabel", IntroFrame)
+IntroTitle.Size = UDim2.new(1, 0, 0, 50)
+IntroTitle.Position = UDim2.new(0, 0, 0.4, 0)
+IntroTitle.Text = "MM2 QPDYYHUB"
+IntroTitle.TextColor3 = Color3.fromRGB(255, 50, 50)
+IntroTitle.Font = Enum.Font.SourceSansBold
+IntroTitle.TextSize = 36
+IntroTitle.BackgroundTransparency = 1
+IntroTitle.ZIndex = 101
+
+local IntroSub = Instance.new("TextLabel", IntroFrame)
+IntroSub.Size = UDim2.new(1, 0, 0, 30)
+IntroSub.Position = UDim2.new(0, 0, 0.5, 0)
+IntroSub.Text = "tg: @qpdyy_off_scripts"
+IntroSub.TextColor3 = Color3.fromRGB(200, 200, 200)
+IntroSub.Font = Enum.Font.SourceSansBold
+IntroSub.TextSize = 18
+IntroSub.BackgroundTransparency = 1
+IntroSub.ZIndex = 101
+
+IntroTitle.TextTransparency = 1
+IntroSub.TextTransparency = 1
+IntroFrame.BackgroundTransparency = 1
+
+TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+TweenService:Create(IntroTitle, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+TweenService:Create(IntroSub, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+
+task.spawn(function()
+    task.wait(2.5)
+    TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 1}):Play()
+    TweenService:Create(IntroTitle, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
+    TweenService:Create(IntroSub, TweenInfo.new(0.5), {TextTransparency = 1}):Play()
+    task.wait(0.5)
+    IntroFrame:Destroy()
+end)
+
+-- ГЛАВНОЕ МЕНЮ
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 440, 0, 320)
+MainFrame.Position = UDim2.new(0.2, 0, 0.2, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
+
+local TitleBar = Instance.new("TextLabel", MainFrame)
+TitleBar.Size = UDim2.new(1, 0, 0, 45)
+TitleBar.Text = "tg: @qpdyy_off_scripts"
+TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TitleBar.Font = Enum.Font.SourceSansBold
+TitleBar.TextSize = 14
+Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 14)
+
+-- КНОПКИ СВЕРНУТЬ И ЗАКРЫТЬ
+local OpenBtn = Instance.new("TextButton", ScreenGui)
+OpenBtn.Size = UDim2.new(0, 50, 0, 50)
+OpenBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
+OpenBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+OpenBtn.Text = "QP"
+OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenBtn.Font = Enum.Font.SourceSansBold
+OpenBtn.TextSize = 18
+OpenBtn.Visible = false
+OpenBtn.Active = true
+OpenBtn.Draggable = true
+Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 50)
+
+local MinimizeBtn = Instance.new("TextButton", MainFrame)
+MinimizeBtn.Size = UDim2.new(0, 26, 0, 26)
+MinimizeBtn.Position = UDim2.new(1, -62, 0, 9)
+MinimizeBtn.Text = "-"
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeBtn.Font = Enum.Font.SourceSansBold
+MinimizeBtn.TextSize = 18
+MinimizeBtn.BorderSizePixel = 0
+Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 50)
+
+local CloseBtn = Instance.new("TextButton", MainFrame)
+CloseBtn.Size = UDim2.new(0, 26, 0, 26)
+CloseBtn.Position = UDim2.new(1, -32, 0, 9)
+CloseBtn.Text = "X"
+CloseBtn.BackgroundColor3 = Color3.fromRGB(90, 35, 35)
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.Font = Enum.Font.SourceSansBold
+CloseBtn.TextSize = 14
+CloseBtn.BorderSizePixel = 0
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 50)
+
+MinimizeBtn.MouseButton1Click:Connect(function()
+    OpenBtn.Position = MainFrame.Position
+    MainFrame.Visible = false
+    OpenBtn.Visible = true
+end)
+
+OpenBtn.MouseButton1Click:Connect(function()
+    MainFrame.Position = OpenBtn.Position
+    OpenBtn.Visible = false
+    MainFrame.Visible = true
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- ВКЛАДКИ И КАТЕГОРИИ
+local tabs = {"Player", "ESP", "Teleport", "Effects"}
+local pages = {}
+
+local TabFrame = Instance.new("Frame", MainFrame)
+TabFrame.Size = UDim2.new(0, 100, 1, -55)
+TabFrame.Position = UDim2.new(0, 5, 0, 50)
+TabFrame.BackgroundTransparency = 1
+
+for i, tName in ipairs(tabs) do
+    local TabBtn = Instance.new("TextButton", TabFrame)
+    TabBtn.Size = UDim2.new(1, -5, 0, 35)
+    TabBtn.Position = UDim2.new(0, 0, 0, (i - 1) * 40)
+    TabBtn.Text = tName
+    TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    TabBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+    TabBtn.Font = Enum.Font.SourceSansBold
+    TabBtn.TextSize = 13
+    Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
+
+    local PageContainer = Instance.new("ScrollingFrame", MainFrame)
+    PageContainer.Size = UDim2.new(1, -120, 1, -60)
+    PageContainer.Position = UDim2.new(0, 110, 0, 50)
+    PageContainer.BackgroundTransparency = 1
+    PageContainer.BorderSizePixel = 0
+    PageContainer.CanvasSize = UDim2.new(0, 0, 0, 400)
+    PageContainer.Visible = false
+    PageContainer.ScrollBarThickness = 2
+    pages[tName] = PageContainer
+
+    if i == 1 then
+        PageContainer.Visible = true
+        TabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+
+    TabBtn.MouseButton1Click:Connect(function()
+        for _, p in pairs(pages) do p.Visible = false end
+        PageContainer.Visible = true
+        for _, b in ipairs(TabFrame:GetChildren()) do
+            if b:IsA("TextButton") then
+                b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                b.TextColor3 = Color3.fromRGB(180, 180, 180)
+            end
+        end
+        TabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end)
+end
+
+-- КОНСТРУКТОР КНОПОК
+local function createButton(tab, name, y, flag)
+    local b = Instance.new("TextButton", pages[tab])
+    b.Size = UDim2.new(1, -10, 0, 38)
+    b.Position = UDim2.new(0, 5, 0, y)
+    b.Text = name
+    b.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    b.TextColor3 = Color3.fromRGB(200, 200, 200)
+    b.Font = Enum.Font.SourceSansBold
+    b.TextSize = 14
+    b.BorderSizePixel = 0
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
+
+    b.MouseButton1Click:Connect(function()
+        Flags[flag] = not Flags[flag]
+        local targetColor = Flags[flag] and Color3.fromRGB(46, 117, 89) or Color3.fromRGB(35, 35, 35)
+        TweenService:Create(b, TweenInfo.new(0.2), {BackgroundColor3 = targetColor}):Play()
+    end)
+    return b
+end
+
+createButton("Player", "Fly Control", 5, "Fly")
+createButton("Player", "Noclip Walls", 50, "Noclip")
+createButton("Player", "Infinite Jump", 95, "InfJump")
+createButton("Player", "Fling Mode", 140, "Fling")
+
+createButton("ESP", "Activate ESP", 5, "ESP")
+createButton("ESP", "Highlight Gun", 50, "HG")
+
+-- КОНСТРУКТОР ПОЛЗУНКОВ
+local function createSlider(tab, name, y, min, max, def, flag)
+    local lab = Instance.new("TextLabel", pages[tab])
+    lab.Size = UDim2.new(1, -10, 0, 20)
+    lab.Position = UDim2.new(0, 5, 0, y)
+    lab.Text = name .. ": " .. def
+    lab.BackgroundTransparency = 1
+    lab.TextColor3 = Color3.fromRGB(200, 200, 200)
+    lab.Font = Enum.Font.SourceSansBold
+    lab.TextSize = 12
+
+    local bg = Instance.new("Frame", pages[tab])
+    bg.Size = UDim2.new(1, -20, 0, 8)
+    bg.Position = UDim2.new(0, 10, 0, y + 22)
+    bg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    bg.BorderSizePixel = 0
+    Instance.new("UICorner", bg)
+
+    local fil = Instance.new("Frame", bg)
+    fil.Size = UDim2.new((def - min) / (max - min), 0, 1, 0)
+    fil.BackgroundColor3 = Color3.fromRGB(0, 160, 100)
+    fil.BorderSizePixel = 0
+    Instance.new("UICorner", fil)
+
+    local btn = Instance.new("TextButton", bg)
+    btn.Size = UDim2.new(0, 14, 0, 14)
+    btn.Position = UDim2.new((def - min) / (max - min), -7, 0, -3)
+    btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Text = ""
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 50)
+
+    local drag = false
+    btn.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then 
+            drag = true 
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then 
+            drag = false 
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(i)
+        if drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+            local cp = i.Position.X
+            local gp = bg.AbsolutePosition.X
+            local gw = bg.AbsoluteSize.X
+            local pct = math.clamp((cp - gp) / gw, 0, 1)
+            btn.Position = UDim2.new(pct, -7, 0, -3)
+            fil.Size = UDim2.new(pct, 0, 1, 0)
+            local val = math.floor(min + (max - min) * pct)
+            lab.Text = name .. ": " .. val
+
+            if flag == "S" then walkSpeedValue = val 
+            elseif flag == "F" then fovValue = val 
+            elseif flag == "T" then timeOfDayValue = val 
+            elseif flag == "B" then brightnessValue = val end
+
+            if Flags.SpdOn and flag == "S" and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = walkSpeedValue
+            end
+            if Flags.FovOn and flag == "F" then workspace.CurrentCamera.FieldOfView = fovValue end
+            if flag == "T" then Lighting.TimeOfDay = timeOfDayValue .. ":00:00" end
+            if flag == "B" then Lighting.Brightness = brightnessValue end
+        end
+    end)
+
+    local ab = Instance.new("TextButton", pages[tab])
+    ab.Size = UDim2.new(1, -10, 0, 30)
+    ab.Position = UDim2.new(0, 5, 0, y + 35)
+    ab.Text = "Apply " .. name
+    ab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    ab.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ab.Font = Enum.Font.SourceSansBold
+    ab.TextSize = 13
+    Instance.new("UICorner", ab).CornerRadius = UDim.new(0, 6)
+
+    ab.MouseButton1Click:Connect(function()
+        local act = false
+        if flag == "S" then
+            Flags.SpdOn = not Flags.SpdOn
+            act = Flags.SpdOn
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = act and walkSpeedValue or 16
+            end
+        elseif flag == "F" then
+            Flags.FovOn = not Flags.FovOn
+            act = Flags.FovOn
+            workspace.CurrentCamera.FieldOfView = act and fovValue or 70
+        end
+        local targetC = act and Color3.fromRGB(46, 117, 89) or Color3.fromRGB(50, 50, 50)
+        TweenService:Create(ab, TweenInfo.new(0.2), {BackgroundColor3 = targetC}):Play()
+    end)
+end
+
+createSlider("Player", "Speedhack", 185, 5, 100, 16, "S")
+createSlider("Player", "FOV Config", 255, 70, 120, 70, "F")
+
+-- ЛОГИКА ТЕЛЕПОРТА
+local function getPlayerRole(p)
+    local b = p:FindFirstChild("Backpack")
+    local ch = p.Character
+    if (b and b:FindFirstChild("Knife")) or (ch and ch:FindFirstChild("Knife")) then return "M" end
+    if (b and b:FindFirstChild("Gun")) or (ch and ch:FindFirstChild("Gun")) then return "S" end
+    return "I"
+end
+
+local function tpTo(role)
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            if getPlayerRole(p) == role then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+                return
+            end
+        end
+    end
+end
+
+local function createTpButton(name, y, targetMode)
+    local b = Instance.new("TextButton", pages["Teleport"])
+    b.Size = UDim2.new(1, -10, 0, 38)
+    b.Position = UDim2.new(0, 5, 0, y)
+    b.Text = name
+    b.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    b.TextColor3 = Color3.fromRGB(230, 230, 230)
+    b.Font = Enum.Font.SourceSansBold
+    b.TextSize = 14
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
+
+    b.MouseButton1Click:Connect(function()
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            if targetMode == "R" then
+                local allPlrs = Players:GetPlayers()
+                if #allPlrs > 1 then
+                    local randomPlr = allPlrs[math.random(1, #allPlrs)]
+                    while randomPlr == LocalPlayer do
+                        randomPlr = allPlrs[math.random(1, #allPlrs)]
+                    end
+                    if randomPlr.Character and randomPlr.Character:FindFirstChild("HumanoidRootPart") then
+                        LocalPlayer.Character.HumanoidRootPart.CFrame = randomPlr.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+                    end
+                end
+            else
+                tpTo(targetMode)
+            end
+        end
+    end)
+end
+
+createTpButton("Teleport to Murderer", 5, "M")
+createTpButton("Teleport to Sheriff", 50, "S")
+createTpButton("Teleport to Random Player", 95, "R")
+
+-- Вкладка Эффектов
+createButton("Effects", "Psycho Sky", 5, "Psy")
+createButton("Effects", "Colored Fog", 50, "Fog")
+createSlider("Effects", "Time of Day", 95, 0, 23, 14, "T")
+createSlider("Effects", "Brightness", 165, 0, 10, 2, "B")
+
+-- РЕСАЙЗ МЕНЮ (ИЗМЕНЕНИЕ РАЗМЕРА)
+local ResizeArea = Instance.new("Frame", MainFrame)
+ResizeArea.Size = UDim2.new(0, 16, 0, 16)
+ResizeArea.Position = UDim2.new(1, -16, 1, -16)
+ResizeArea.BackgroundTransparency = 1
+ResizeArea.ZIndex = 100
+
+local isResizing = false
+local startSize, startPos
+
+ResizeArea.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        isResizing = true
+        startSize = MainFrame.Size
+        startPos = input.Position
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        isResizing = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if isResizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - startPos
+        local nextWidth = math.clamp(startSize.X.Offset + delta.X, 300, 600)
+        local nextHeight = math.clamp(startSize.Y.Offset + delta.Y, 250, 500)
+        MainFrame.Size = UDim2.new(0, nextWidth, 0, nextHeight)
+        TabFrame.Size = UDim2.new(0, 100, 1, -55)
+        for _, p in pairs(pages) do
+            p.Size = UDim2.new(1, -120, 1, -60)
+        end
+    end
+end)
+
+-- ГЛАВНЫЕ ИГРОВЫЕ ЦИКЛЫ (ESP, FLY, NOCLIP, FLING)
+task.spawn(function()
+    while task.wait(0.5) do
+        if Flags.ESP or Flags.HG then
+            for _, p in ipairs(Players:GetPlayers()) do
+                if p ~= LocalPlayer and p.Character then
+                    local ch = p.Character
+                    local highlight = ch:FindFirstChild("ESPH")
+                    local role = getPlayerRole(p)
+
+                    if (Flags.ESP) or (Flags.HG and role == "S") then
+                        if not highlight and ch:FindFirstChild("HumanoidRootPart") then
+                            highlight = Instance.new("Highlight", ch)
+                            highlight.Name = "ESPH"
+                            highlight.FillTransparency = 0.4
+                            highlight.OutlineTransparency = 0
+                        end
+                        if highlight then
+                            local clr = Colors[role]
+                            if Flags.HG and role == "S" then clr = Colors.S end
+                            highlight.FillColor = clr
+                            highlight.OutlineColor = clr
+                        end
+                    else
+                        if highlight then highlight:Destroy() end
+                    end
+                end
+            end
+        else
+            for _, p in ipairs(Players:GetPlayers()) do
+                if p.Character and p.Character:FindFirstChild("ESPH") then
+                    p.Character.ESPH:Destroy()
+                end
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if Flags.InfJump and LocalPlayer.Character then
+            local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Jump then
+                hum:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end
+end)
+
+local bodyVel, bodyGyro
+RunService.Stepped:Connect(function()
+    local character = LocalPlayer.Character
+    if not character then return end
+
+    if Flags.Noclip then
+        for _, part in ipairs(character:GetChildren()) do
+            if part:IsA("BasePart") then part.CanCollide = false end
+        end
+    end
+
+    local hum = character:FindFirstChildOfClass("Humanoid")
+    local root = character:FindFirstChild("HumanoidRootPart")
+
+    if Flags.Fling and root then
+        root.Velocity = Vector3.new(0, 50000, 0)
+        root.RotVelocity = Vector3.new(0, 50000, 0)
+    end
+
+    if Flags.Fly and root and hum then
+        if not bodyVel then
+            bodyVel = Instance.new("BodyVelocity", root)
+            bodyVel.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+            bodyGyro = Instance.new("BodyGyro", root)
+            bodyGyro.MaxTorque = Vector3.new(1e5, 1e5, 1e5)
+        end
+        bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+        hum.PlatformStand = true
+        bodyVel.Velocity = hum.MoveDirection.Magnitude > 0 and workspace.CurrentCamera.CFrame.LookVector * flySpeed or Vector3.new(0, 0, 0)
+    else
+        if bodyVel then bodyVel:Destroy(); bodyVel = nil end
+        if bodyGyro then bodyGyro:Destroy(); bodyGyro = nil end
+        if hum and hum.PlatformStand then hum.PlatformStand = false end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if Flags.Fog then
+            Lighting.FogEnd = 150
+            Lighting.FogColor = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+        else
+            Lighting.FogEnd = 100000
+        end
+        if Flags.Psy then
+            Lighting.Ambient = Color3.fromHSV(tick() % 3 / 3, 1, 1)
+        else
+            Lighting.Ambient = Color3.fromRGB(128, 128, 128)
+        end
+    end
+end)
