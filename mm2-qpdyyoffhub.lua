@@ -12,16 +12,9 @@ local Colors = {
 }
 
 local Flags = {
-    ESP = false,
-    HG = false,
-    Fly = false,
-    Noclip = false,
-    InfJump = false,
-    Fling = false,
-    SpdOn = false,
-    FovOn = false,
-    Fog = false,
-    Psy = false
+    ESP = false, HG = false, Fly = false, Noclip = false,
+    InfJump = false, Fling = false, SpdOn = false, FovOn = false,
+    Fog = false, Psy = false
 }
 
 local flySpeed = 45
@@ -29,6 +22,7 @@ local walkSpeedValue = 16
 local fovValue = 70
 local timeOfDayValue = 14
 local brightnessValue = 2
+local isTweening = false
 
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 if PlayerGui:FindFirstChild("QPHub") then 
@@ -38,15 +32,27 @@ end
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "QPHub"
 ScreenGui.ResetOnSpawn = false
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
+-- Кнопка QH
+local ToggleBtn = Instance.new("TextButton", ScreenGui)
+ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+ToggleBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ToggleBtn.Text = "QH"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.Font = Enum.Font.SourceSansBold
+ToggleBtn.TextSize = 18
+ToggleBtn.Visible = false
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
+
+-- Окно
 local MainFrame = Instance.new("Frame", ScreenGui)
 local defaultSize = UDim2.new(0, 440, 0, 320)
 MainFrame.Size = defaultSize
 MainFrame.Position = UDim2.new(0.5, -220, 0.5, -160)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-MainFrame.BorderSizePixel = 0
-MainFrame.ZIndex = 1
 MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
@@ -58,161 +64,65 @@ TitleBar.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TitleBar.Font = Enum.Font.SourceSansBold
 TitleBar.TextSize = 14
-TitleBar.ZIndex = 2
 Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 14)
-
-task.spawn(function()
-    while RunService.RenderStepped:Wait() do
-        TitleBar.TextColor3 = Color3.fromHSV(tick() % 4 / 4, 1, 1)
-    end
-end)
-
-local OpenBtn = Instance.new("TextButton", ScreenGui)
-OpenBtn.Size = UDim2.new(0, 55, 0, 55)
-OpenBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
-OpenBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-OpenBtn.Text = "🔪"
-OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-OpenBtn.Font = Enum.Font.SourceSansBold
-OpenBtn.TextSize = 24
-OpenBtn.Visible = false
-OpenBtn.Active = true
-OpenBtn.Draggable = true
-OpenBtn.ZIndex = 400
-Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 50)
-local OpenBorder = Instance.new("UIStroke", OpenBtn)
-OpenBorder.Color = Color3.fromRGB(240, 240, 240)
-OpenBorder.Width = 2
-
-local MinimizeBtn = Instance.new("TextButton", MainFrame)
-MinimizeBtn.Size = UDim2.new(0, 26, 0, 26)
-MinimizeBtn.Position = UDim2.new(1, -62, 0, 9)
-MinimizeBtn.Text = "-"
-MinimizeBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizeBtn.Font = Enum.Font.SourceSansBold
-MinimizeBtn.TextSize = 18
-MinimizeBtn.BorderSizePixel = 0
-MinimizeBtn.ZIndex = 10
-Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 50)
 
 local CloseBtn = Instance.new("TextButton", MainFrame)
 CloseBtn.Size = UDim2.new(0, 26, 0, 26)
-CloseBtn.Position = UDim2.new(1, -32, 0, 9)
+CloseBtn.Position = UDim2.new(1, -35, 0, 9)
 CloseBtn.Text = "X"
 CloseBtn.BackgroundColor3 = Color3.fromRGB(90, 35, 35)
 CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseBtn.Font = Enum.Font.SourceSansBold
-CloseBtn.TextSize = 14
-CloseBtn.BorderSizePixel = 0
-CloseBtn.ZIndex = 10
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 50)
 
-local isTweening = false
-
-local function toggleUI(open)
-    if isTweening then return end
-    isTweening = true
-    
-    if not open then
-        local targetPos = OpenBtn.Position
-        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            Size = UDim2.new(0, 0, 0, 0),
-            Position = UDim2.new(targetPos.X.Scale, targetPos.X.Offset + 27, targetPos.Y.Scale, targetPos.Y.Offset + 27)
-        })
-        tweenMain:Play()
-        tweenMain.Completed:Connect(function()
-            MainFrame.Visible = false
-            OpenBtn.BackgroundTransparency = 1
-            OpenBtn.TextTransparency = 1
-            OpenBorder.Transparency = 1
-            OpenBtn.Visible = true
-            
-            TweenService:Create(OpenBtn, TweenInfo.new(0.15), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
-            TweenService:Create(OpenBorder, TweenInfo.new(0.15), {Transparency = 0}):Play()
-            isTweening = false
-        end)
-    else
-        local startPos = OpenBtn.Position
-        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + 27, startPos.Y.Scale, startPos.Y.Offset + 27)
-        MainFrame.Visible = true
-        
-        TweenService:Create(OpenBtn, TweenInfo.new(0.15), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
-        TweenService:Create(OpenBorder, TweenInfo.new(0.15), {Transparency = 1}):Play()
-        
-        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Size = defaultSize,
-            Position = UDim2.new(0.5, -defaultSize.X.Offset/2, 0.5, -defaultSize.Y.Offset/2)
-        })
-        tweenMain:Play()
-        tweenMain.Completed:Connect(function()
-            OpenBtn.Visible = false
-            isTweening = false
-        end)
-    end
-end
+local MinimizeBtn = Instance.new("TextButton", MainFrame)
+MinimizeBtn.Size = UDim2.new(0, 26, 0, 26)
+MinimizeBtn.Position = UDim2.new(1, -67, 0, 9)
+MinimizeBtn.Text = "-"
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 50)
 
 MinimizeBtn.MouseButton1Click:Connect(function()
-    toggleUI(false)
+    MainFrame.Visible = false
+    ToggleBtn.Visible = true
 end)
 
-local function onOpenTriggered()
-    if OpenBtn.Visible and not isTweening then
-        toggleUI(true)
-    end
-end
-
-OpenBtn.MouseButton1Click:Connect(onOpenTriggered)
-OpenBtn.TouchTap:Connect(onOpenTriggered)
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = true
+    ToggleBtn.Visible = false
+end)
 
 CloseBtn.MouseButton1Click:Connect(function()
-    if isTweening then return end
-    isTweening = true
-    local tweenClose = TweenService:Create(MainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-        Size = UDim2.new(0, 0, 0, 0)
-    })
-    tweenClose:Play()
-    tweenClose.Completed:Connect(function()
-        ScreenGui:Destroy()
-    end)
+    ScreenGui:Destroy()
 end)
 
-local tabs = {
-    {Name = "Player", Icon = "👤"},
-    {Name = "ESP", Icon = "🎯"},
-    {Name = "Teleport", Icon = "🌀"},
-    {Name = "Effects", Icon = "✨"}
-}
+local tabs = {"Player", "ESP", "Teleport", "Effects"}
 local pages = {}
 
 local TabFrame = Instance.new("Frame", MainFrame)
 TabFrame.Size = UDim2.new(0, 110, 1, -55)
 TabFrame.Position = UDim2.new(0, 5, 0, 50)
 TabFrame.BackgroundTransparency = 1
-TabFrame.ZIndex = 2
 
-for i, tabData in ipairs(tabs) do
-    local tName = tabData.Name
+for i, tName in ipairs(tabs) do
     local TabBtn = Instance.new("TextButton", TabFrame)
     TabBtn.Size = UDim2.new(1, -5, 0, 35)
     TabBtn.Position = UDim2.new(0, 0, 0, (i - 1) * 40)
-    TabBtn.Text = tabData.Icon .. " " .. tName
+    TabBtn.Text = tName
     TabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     TabBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
     TabBtn.Font = Enum.Font.SourceSansBold
-    TabBtn.TextSize = 13
-    TabBtn.ZIndex = 4
     Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
 
     local PageContainer = Instance.new("ScrollingFrame", MainFrame)
     PageContainer.Size = UDim2.new(1, -130, 1, -60)
     PageContainer.Position = UDim2.new(0, 120, 0, 50)
     PageContainer.BackgroundTransparency = 1
-    PageContainer.BorderSizePixel = 0
     PageContainer.CanvasSize = UDim2.new(0, 0, 0, 400)
     PageContainer.Visible = false
     PageContainer.ScrollBarThickness = 2
-    PageContainer.ZIndex = 3
     pages[tName] = PageContainer
 
     if i == 1 then
@@ -228,7 +138,6 @@ for i, tabData in ipairs(tabs) do
             if b:IsA("TextButton") then
                 b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
                 b.TextColor3 = Color3.fromRGB(180, 180, 180)
-                b.ZIndex = 4
             end
         end
         TabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -237,22 +146,21 @@ for i, tabData in ipairs(tabs) do
 end
 
 local function createButton(tab, name, y, flag)
-    local b = Instance.new("TextButton", pages[tab])
+    local p = pages[tab]
+    if not p then return end
+    
+    local b = Instance.new("TextButton", p)
     b.Size = UDim2.new(1, -10, 0, 38)
     b.Position = UDim2.new(0, 5, 0, y)
     b.Text = name
     b.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     b.TextColor3 = Color3.fromRGB(200, 200, 200)
     b.Font = Enum.Font.SourceSansBold
-    b.TextSize = 14
-    b.BorderSizePixel = 0
-    b.ZIndex = 5
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
 
     b.MouseButton1Click:Connect(function()
         Flags[flag] = not Flags[flag]
-        local targetColor = Flags[flag] and Color3.fromRGB(46, 117, 89) or Color3.fromRGB(35, 35, 35)
-        TweenService:Create(b, TweenInfo.new(0.2), {BackgroundColor3 = targetColor}):Play()
+        b.BackgroundColor3 = Flags[flag] and Color3.fromRGB(46, 117, 89) or Color3.fromRGB(35, 35, 35)
     end)
     return b
 end
@@ -266,29 +174,26 @@ createButton("ESP", "Activate ESP", 5, "ESP")
 createButton("ESP", "Highlight Gun", 50, "HG")
 
 local function createSlider(tab, name, y, min, max, def, flag)
-    local lab = Instance.new("TextLabel", pages[tab])
+    local p = pages[tab]
+    if not p then return end
+
+    local lab = Instance.new("TextLabel", p)
     lab.Size = UDim2.new(1, -10, 0, 20)
     lab.Position = UDim2.new(0, 5, 0, y)
     lab.Text = name .. ": " .. def
     lab.BackgroundTransparency = 1
     lab.TextColor3 = Color3.fromRGB(200, 200, 200)
     lab.Font = Enum.Font.SourceSansBold
-    lab.TextSize = 12
-    lab.ZIndex = 5
 
-    local bg = Instance.new("Frame", pages[tab])
+    local bg = Instance.new("Frame", p)
     bg.Size = UDim2.new(1, -20, 0, 8)
     bg.Position = UDim2.new(0, 10, 0, y + 22)
     bg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    bg.BorderSizePixel = 0
-    bg.ZIndex = 5
     Instance.new("UICorner", bg)
 
     local fil = Instance.new("Frame", bg)
     fil.Size = UDim2.new((def - min) / (max - min), 0, 1, 0)
     fil.BackgroundColor3 = Color3.fromRGB(0, 160, 100)
-    fil.BorderSizePixel = 0
-    fil.ZIndex = 5
     Instance.new("UICorner", fil)
 
     local btn = Instance.new("TextButton", bg)
@@ -296,28 +201,20 @@ local function createSlider(tab, name, y, min, max, def, flag)
     btn.Position = UDim2.new((def - min) / (max - min), -7, 0, -3)
     btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     btn.Text = ""
-    btn.ZIndex = 6
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 50)
 
     local drag = false
     btn.InputBegan:Connect(function(i)
-        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then 
-            drag = true 
-        end
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then drag = true end
     end)
 
     UserInputService.InputEnded:Connect(function(i)
-        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then 
-            drag = false 
-        end
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then drag = false end
     end)
 
     UserInputService.InputChanged:Connect(function(i)
         if drag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-            local cp = i.Position.X
-            local gp = bg.AbsolutePosition.X
-            local gw = bg.AbsoluteSize.X
-            local pct = math.clamp((cp - gp) / gw, 0, 1)
+            local pct = math.clamp((i.Position.X - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1)
             btn.Position = UDim2.new(pct, -7, 0, -3)
             fil.Size = UDim2.new(pct, 0, 1, 0)
             local val = math.floor(min + (max - min) * pct)
@@ -337,15 +234,13 @@ local function createSlider(tab, name, y, min, max, def, flag)
         end
     end)
 
-    local ab = Instance.new("TextButton", pages[tab])
+    local ab = Instance.new("TextButton", p)
     ab.Size = UDim2.new(1, -10, 0, 30)
     ab.Position = UDim2.new(0, 5, 0, y + 35)
-    ab.Text = "Apply " .. name
+    ab.Text = "Toggle " .. name
     ab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     ab.TextColor3 = Color3.fromRGB(255, 255, 255)
     ab.Font = Enum.Font.SourceSansBold
-    ab.TextSize = 13
-    ab.ZIndex = 5
     Instance.new("UICorner", ab).CornerRadius = UDim.new(0, 6)
 
     ab.MouseButton1Click:Connect(function()
@@ -361,8 +256,7 @@ local function createSlider(tab, name, y, min, max, def, flag)
             act = Flags.FovOn
             workspace.CurrentCamera.FieldOfView = act and fovValue or 70
         end
-        local targetC = act and Color3.fromRGB(46, 117, 89) or Color3.fromRGB(50, 50, 50)
-        TweenService:Create(ab, TweenInfo.new(0.2), {BackgroundColor3 = targetC}):Play()
+        ab.BackgroundColor3 = act and Color3.fromRGB(46, 117, 89) or Color3.fromRGB(50, 50, 50)
     end)
 end
 
@@ -389,15 +283,16 @@ local function tpTo(role)
 end
 
 local function createTpButton(name, y, targetMode)
-    local b = Instance.new("TextButton", pages["Teleport"])
+    local p = pages["Teleport"]
+    if not p then return end
+
+    local b = Instance.new("TextButton", p)
     b.Size = UDim2.new(1, -10, 0, 38)
     b.Position = UDim2.new(0, 5, 0, y)
     b.Text = name
     b.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     b.TextColor3 = Color3.fromRGB(230, 230, 230)
     b.Font = Enum.Font.SourceSansBold
-    b.TextSize = 14
-    b.ZIndex = 5
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
 
     b.MouseButton1Click:Connect(function()
@@ -406,9 +301,7 @@ local function createTpButton(name, y, targetMode)
                 local allPlrs = Players:GetPlayers()
                 if #allPlrs > 1 then
                     local randomPlr = allPlrs[math.random(1, #allPlrs)]
-                    while randomPlr == LocalPlayer do
-                        randomPlr = allPlrs[math.random(1, #allPlrs)]
-                    end
+                    while randomPlr == LocalPlayer do randomPlr = allPlrs[math.random(1, #allPlrs)] end
                     if randomPlr.Character and randomPlr.Character:FindFirstChild("HumanoidRootPart") then
                         LocalPlayer.Character.HumanoidRootPart.CFrame = randomPlr.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
                     end
@@ -429,92 +322,37 @@ createButton("Effects", "Colored Fog", 50, "Fog")
 createSlider("Effects", "Time of Day", 95, 0, 23, 14, "T")
 createSlider("Effects", "Brightness", 165, 0, 10, 2, "B")
 
-local ResizeArea = Instance.new("Frame", MainFrame)
-ResizeArea.Size = UDim2.new(0, 16, 0, 16)
-ResizeArea.Position = UDim2.new(1, -16, 1, -16)
-ResizeArea.BackgroundTransparency = 1
-ResizeArea.ZIndex = 100
-
-local isResizing = false
-local startSize, startPos
-
-ResizeArea.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isResizing = true
-        startSize = MainFrame.Size
-        startPos = input.Position
-    end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isResizing = false
-        defaultSize = MainFrame.Size
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if isResizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local delta = input.Position - startPos
-        local nextWidth = math.clamp(startSize.X.Offset + delta.X, 300, 600)
-        local nextHeight = math.clamp(startSize.Y.Offset + delta.Y, 250, 500)
-        MainFrame.Size = UDim2.new(0, nextWidth, 0, nextHeight)
-        TabFrame.Size = UDim2.new(0, 110, 1, -55)
-        for _, p in pairs(pages) do
-            p.Size = UDim2.new(1, -130, 1, -60)
-        end
-    end
-end)
-
 local function applyESP(player)
     if player == LocalPlayer then return end
-    
-    local function setupHighlight(character)
+    local function updateHighlight(character)
         if not character then return end
-        local root = character:WaitForChild("HumanoidRootPart", 5)
-        if not root then return end
-
         local highlight = character:FindFirstChild("ESPH") or Instance.new("Highlight")
         highlight.Name = "ESPH"
         highlight.FillTransparency = 0.4
         highlight.OutlineTransparency = 0
         highlight.Parent = character
-
         local role = getPlayerRole(player)
-        local clr = Colors[role]
-        
-        if Flags.ESP or (Flags.HG and role == "S") then
-            highlight.Enabled = true
-            highlight.FillColor = clr
-            highlight.OutlineColor = clr
-        else
-            highlight.Enabled = false
-        end
+        highlight.FillColor = Colors[role] or Colors.I
+        highlight.OutlineColor = Colors[role] or Colors.I
+        highlight.Enabled = (Flags.ESP or (Flags.HG and role == "S"))
     end
-
-    if player.Character then setupHighlight(player.Character) end
-    player.CharacterAdded:Connect(setupHighlight)
+    player.CharacterAdded:Connect(updateHighlight)
+    if player.Character then updateHighlight(player.Character) end
 end
 
 for _, p in ipairs(Players:GetPlayers()) do applyESP(p) end
 Players.PlayerAdded:Connect(applyESP)
 
 task.spawn(function()
-    while task.wait(0.3) do
+    while task.wait(0.5) do
         for _, p in ipairs(Players:GetPlayers()) do
             if p ~= LocalPlayer and p.Character then
                 local highlight = p.Character:FindFirstChild("ESPH")
-                local role = getPlayerRole(p)
-                local clr = Colors[role]
-
                 if highlight then
-                    if Flags.ESP or (Flags.HG and role == "S") then
-                        highlight.Enabled = true
-                        highlight.FillColor = clr
-                        highlight.OutlineColor = clr
-                    else
-                        highlight.Enabled = false
-                    end
+                    local role = getPlayerRole(p)
+                    highlight.Enabled = (Flags.ESP or (Flags.HG and role == "S"))
+                    highlight.FillColor = Colors[role]
+                    highlight.OutlineColor = Colors[role]
                 end
             end
         end
@@ -525,9 +363,7 @@ task.spawn(function()
     while task.wait(0.1) do
         if Flags.InfJump and LocalPlayer.Character then
             local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-            if hum and hum.Jump then
-                hum:ChangeState(Enum.HumanoidStateType.Jumping)
-            end
+            if hum and hum.Jump then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
         end
     end
 end)
@@ -537,10 +373,8 @@ RunService.Stepped:Connect(function()
     local character = LocalPlayer.Character
     if not character then return end
 
-    if Flags.Noclip then
-        for _, part in ipairs(character:GetChildren()) do
-            if part:IsA("BasePart") then part.CanCollide = false end
-        end
+    for _, part in ipairs(character:GetChildren()) do
+        if part:IsA("BasePart") then part.CanCollide = not Flags.Noclip end
     end
 
     local hum = character:FindFirstChildOfClass("Humanoid")
@@ -560,19 +394,9 @@ RunService.Stepped:Connect(function()
         end
         bodyGyro.CFrame = workspace.CurrentCamera.CFrame
         hum.PlatformStand = true
-        
-        if hum.MoveDirection.Magnitude > 0 then
-            local camCFrame = workspace.CurrentCamera.CFrame
-            local direction = camCFrame:VectorToWorldSpace(Vector3.new(hum.MoveDirection.X, 0, hum.MoveDirection.Z))
-            
-            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                direction = direction + Vector3.new(0, 1, 0)
-            end
-            
-            bodyVel.Velocity = direction.Unit * flySpeed
-        else
-            bodyVel.Velocity = Vector3.new(0, 0, 0)
-        end
+        local direction = hum.MoveDirection.Magnitude > 0 and workspace.CurrentCamera.CFrame.LookVector or Vector3.new(0,0,0)
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then direction = direction + Vector3.new(0, 1, 0) end
+        bodyVel.Velocity = direction.Magnitude > 0 and direction.Unit * flySpeed or Vector3.new(0,0,0)
     else
         if bodyVel then bodyVel:Destroy(); bodyVel = nil end
         if bodyGyro then bodyGyro:Destroy(); bodyGyro = nil end
@@ -582,16 +406,8 @@ end)
 
 task.spawn(function()
     while task.wait(0.1) do
-        if Flags.Fog then
-            Lighting.FogEnd = 150
-            Lighting.FogColor = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-        else
-            Lighting.FogEnd = 100000
-        end
-        if Flags.Psy then
-            Lighting.Ambient = Color3.fromHSV(tick() % 3 / 3, 1, 1)
-        else
-            Lighting.Ambient = Color3.fromRGB(128, 128, 128)
-        end
+        Lighting.FogEnd = Flags.Fog and 150 or 100000
+        if Flags.Fog then Lighting.FogColor = Color3.fromHSV(tick() % 5 / 5, 1, 1) end
+        Lighting.Ambient = Flags.Psy and Color3.fromHSV(tick() % 3 / 3, 1, 1) or Color3.fromRGB(128, 128, 128)
     end
 end)
