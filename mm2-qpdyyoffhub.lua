@@ -44,7 +44,7 @@ local IntroFrame = Instance.new("Frame", ScreenGui)
 IntroFrame.Size = UDim2.new(1, 0, 1, 0)
 IntroFrame.Position = UDim2.new(0, 0, 0, 0)
 IntroFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-IntroFrame.BackgroundTransparency = 1 -- Стартует невидимым для твина
+IntroFrame.BackgroundTransparency = 1
 IntroFrame.BorderSizePixel = 0
 IntroFrame.ZIndex = 100
 
@@ -70,7 +70,7 @@ IntroSub.BackgroundTransparency = 1
 IntroSub.ZIndex = 101
 IntroSub.TextTransparency = 1
 
-TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0.35}):Play() -- Черно-прозрачный фон
+TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0.35}):Play()
 TweenService:Create(IntroTitle, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
 TweenService:Create(IntroSub, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
 
@@ -104,21 +104,23 @@ TitleBar.Font = Enum.Font.SourceSansBold
 TitleBar.TextSize = 14
 Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 14)
 
--- КНОПКИ СВЕРНУТЬ И ЗАКРЫТЬ
+-- СТИЛЬНАЯ ЧЕРНО-БЕЛАЯ КНОПКА-НОЖИК (ЗАМЕНА QP)
 local OpenBtn = Instance.new("TextButton", ScreenGui)
-OpenBtn.Size = UDim2.new(0, 50, 0, 50)
+OpenBtn.Size = UDim2.new(0, 55, 0, 55)
 OpenBtn.Position = UDim2.new(0.05, 0, 0.2, 0)
-OpenBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-OpenBtn.Text = "QP"
-OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- Глубокий черный
+OpenBtn.Text = "🔪"
+OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255) -- Белый нож
 OpenBtn.Font = Enum.Font.SourceSansBold
-OpenBtn.TextSize = 18
+OpenBtn.TextSize = 24
 OpenBtn.Visible = false
 OpenBtn.Active = true
 OpenBtn.Draggable = true
-OpenBtn.BackgroundTransparency = 1
-OpenBtn.TextTransparency = 1
+OpenBtn.ZIndex = 500
 Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 50)
+local OpenBorder = Instance.new("UIStroke", OpenBtn)
+OpenBorder.Color = Color3.fromRGB(240, 240, 240) -- Белая аккуратная обводка
+OpenBorder.Width = 2
 
 local MinimizeBtn = Instance.new("TextButton", MainFrame)
 MinimizeBtn.Size = UDim2.new(0, 26, 0, 26)
@@ -142,54 +144,68 @@ CloseBtn.TextSize = 14
 CloseBtn.BorderSizePixel = 0
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 50)
 
--- АНИМАЦИИ СВЕРНУТЬ / ЗАКРЫТЬ
+-- УСТОЙЧИВАЯ ЛОГИКА АНИМАЦИИ ОКНА
 local isTweening = false
 
-MinimizeBtn.MouseButton1Click:Connect(function()
+local function toggleUI(open)
     if isTweening then return end
     isTweening = true
     
-    local targetPos = OpenBtn.Position
-    local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-        Size = UDim2.new(0, 0, 0, 0),
-        Position = UDim2.new(targetPos.X.Scale, targetPos.X.Offset + 25, targetPos.Y.Scale, targetPos.Y.Offset + 25)
-    })
-    
-    tweenMain:Play()
-    tweenMain.Completed:Connect(function()
-        MainFrame.Visible = false
-        OpenBtn.Visible = true
-        TweenService:Create(OpenBtn, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
-        isTweening = false
-    end)
+    if not open then
+        local targetPos = OpenBtn.Position
+        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 0, 0, 0),
+            Position = UDim2.new(targetPos.X.Scale, targetPos.X.Offset + 27, targetPos.Y.Scale, targetPos.Y.Offset + 27)
+        })
+        tweenMain:Play()
+        tweenMain.Completed:Connect(function()
+            MainFrame.Visible = false
+            OpenBtn.BackgroundTransparency = 1
+            OpenBtn.TextTransparency = 1
+            OpenBorder.Transparency = 1
+            OpenBtn.Visible = true
+            
+            TweenService:Create(OpenBtn, TweenInfo.new(0.25), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+            TweenService:Create(OpenBorder, TweenInfo.new(0.25), {Transparency = 0}):Play()
+            isTweening = false
+        end)
+    else
+        local startPos = OpenBtn.Position
+        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + 27, startPos.Y.Scale, startPos.Y.Offset + 27)
+        MainFrame.Visible = true
+        
+        TweenService:Create(OpenBtn, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+        TweenService:Create(OpenBorder, TweenInfo.new(0.2), {Transparency = 1}):Play()
+        
+        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = defaultSize,
+            Position = UDim2.new(0.5, -defaultSize.X.Offset/2, 0.5, -defaultSize.Y.Offset/2)
+        })
+        tweenMain:Play()
+        tweenMain.Completed:Connect(function()
+            OpenBtn.Visible = false
+            isTweening = false
+        end)
+    end
+end
+
+MinimizeBtn.MouseButton1Click:Connect(function()
+    toggleUI(false)
 end)
 
-OpenBtn.MouseButton1Click:Connect(function()
-    if isTweening then return end
-    isTweening = true
-    
-    local startPos = OpenBtn.Position
-    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + 25, startPos.Y.Scale, startPos.Y.Offset + 25)
-    MainFrame.Visible = true
-    
-    TweenService:Create(OpenBtn, TweenInfo.new(0.2), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
-    task.wait(0.1)
-    OpenBtn.Visible = false
-    
-    local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = defaultSize,
-        Position = UDim2.new(0.5, -220, 0.5, -160)
-    })
-    tweenMain:Play()
-    tweenMain.Completed:Connect(function()
-        isTweening = false
-    end)
-end)
+local function onOpenTriggered()
+    if OpenBtn.Visible and not isTweening then
+        toggleUI(true)
+    end
+end
+
+OpenBtn.MouseButton1Click:Connect(onOpenTriggered)
+OpenBtn.TouchTap:Connect(onOpenTriggered)
 
 CloseBtn.MouseButton1Click:Connect(function()
     if isTweening then return end
     isTweening = true
-    local tweenClose = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+    local tweenClose = TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
         Size = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1
     })
@@ -483,44 +499,64 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- ГЛАВНЫЕ ИГРОВЫЕ ЦИКЛЫ (ESP, ИСПРАВЛЕННЫЙ FLING, МОБИЛЬНЫЙ FLY)
-task.spawn(function()
-    while task.wait(0.5) do
-        if Flags.ESP or Flags.HG then
-            for _, p in ipairs(Players:GetPlayers()) do
-                if p ~= LocalPlayer and p.Character then
-                    local ch = p.Character
-                    local highlight = ch:FindFirstChild("ESPH")
-                    local role = getPlayerRole(p)
+-- ИСПРАВЛЕННЫЙ ЦИКЛ ESP (БЕЗ МИГАНИЙ)
+local function applyESP(player)
+    if player == LocalPlayer then return end
+    
+    local function setupHighlight(character)
+        if not character then return end
+        local root = character:WaitForChild("HumanoidRootPart", 5)
+        if not root then return end
 
-                    if (Flags.ESP) or (Flags.HG and role == "S") then
-                        if not highlight and ch:FindFirstChild("HumanoidRootPart") then
-                            highlight = Instance.new("Highlight", ch)
-                            highlight.Name = "ESPH"
-                            highlight.FillTransparency = 0.4
-                            highlight.OutlineTransparency = 0
-                        end
-                        if highlight then
-                            local clr = Colors[role]
-                            if Flags.HG and role == "S" then clr = Colors.S end
-                            highlight.FillColor = clr
-                            highlight.OutlineColor = clr
-                        end
-                    else
-                        if highlight then highlight:Destroy() end
-                    end
-                end
-            end
+        local highlight = character:FindFirstChild("ESPH") or Instance.new("Highlight")
+        highlight.Name = "ESPH"
+        highlight.FillTransparency = 0.4
+        highlight.OutlineTransparency = 0
+        highlight.Parent = character
+
+        local role = getPlayerRole(player)
+        local clr = Colors[role]
+        
+        if Flags.ESP or (Flags.HG and role == "S") then
+            highlight.Enabled = true
+            highlight.FillColor = clr
+            highlight.OutlineColor = clr
         else
-            for _, p in ipairs(Players:GetPlayers()) do
-                if p.Character and p.Character:FindFirstChild("ESPH") then
-                    p.Character.ESPH:Destroy()
+            highlight.Enabled = false
+        end
+    end
+
+    if player.Character then setupHighlight(player.Character) end
+    player.CharacterAdded:Connect(setupHighlight)
+end
+
+for _, p in ipairs(Players:GetPlayers()) do applyESP(p) end
+Players.PlayerAdded:Connect(applyESP)
+
+-- Динамическое обновление состояния ESP без пересоздания объектов
+task.spawn(function()
+    while task.wait(0.3) do
+        for _, p in ipairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character then
+                local highlight = p.Character:FindFirstChild("ESPH")
+                local role = getPlayerRole(p)
+                local clr = Colors[role]
+
+                if highlight then
+                    if Flags.ESP or (Flags.HG and role == "S") then
+                        highlight.Enabled = true
+                        highlight.FillColor = clr
+                        highlight.OutlineColor = clr
+                    else
+                        highlight.Enabled = false
+                    end
                 end
             end
         end
     end
 end)
 
+-- ОСТАЛЬНЫЕ ИГРОВЫЕ ЦИКЛЫ
 task.spawn(function()
     while task.wait(0.1) do
         if Flags.InfJump and LocalPlayer.Character then
@@ -546,14 +582,11 @@ RunService.Stepped:Connect(function()
     local hum = character:FindFirstChildOfClass("Humanoid")
     local root = character:FindFirstChild("HumanoidRootPart")
 
-    -- СТАБИЛЬНЫЙ ФЛИНГ (Крутит вокруг оси, расталкивая других, не улетая)
     if Flags.Fling and root then
         root.RotVelocity = Vector3.new(0, 50000, 0)
-        -- Убираем дикую линейную скорость по оси Y, чтобы не улетать вверх
         root.Velocity = Vector3.new(root.Velocity.X, 0, root.Velocity.Z) 
     end
 
-    -- УД ОБНЫЙ НАПРАВЛЕННЫЙ ПОЛЕТ ДЛЯ ТЕЛЕФОНА (По вектору движения джойстика)
     if Flags.Fly and root and hum then
         if not bodyVel then
             bodyVel = Instance.new("BodyVelocity", root)
@@ -564,13 +597,10 @@ RunService.Stepped:Connect(function()
         bodyGyro.CFrame = workspace.CurrentCamera.CFrame
         hum.PlatformStand = true
         
-        -- Считываем MoveDirection (куда направлен виртуальный джойстик на мобильном)
         if hum.MoveDirection.Magnitude > 0 then
-            -- Направление полета формируется на основе взгляда камеры и направления движения стика
             local camCFrame = workspace.CurrentCamera.CFrame
             local direction = camCFrame:VectorToWorldSpace(Vector3.new(hum.MoveDirection.X, 0, hum.MoveDirection.Z))
             
-            -- Если игрок зажимает прыжок/кнопку вверх, летим выше
             if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
                 direction = direction + Vector3.new(0, 1, 0)
             end
