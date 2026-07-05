@@ -38,6 +38,7 @@ end
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "QPHub"
 ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 local IntroFrame = Instance.new("Frame", ScreenGui)
 IntroFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -45,7 +46,7 @@ IntroFrame.Position = UDim2.new(0, 0, 0, 0)
 IntroFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 IntroFrame.BackgroundTransparency = 1
 IntroFrame.BorderSizePixel = 0
-IntroFrame.ZIndex = 100
+IntroFrame.ZIndex = 500
 
 local IntroTitle = Instance.new("TextLabel", IntroFrame)
 IntroTitle.Size = UDim2.new(1, 0, 0, 50)
@@ -55,7 +56,7 @@ IntroTitle.TextColor3 = Color3.fromRGB(255, 50, 50)
 IntroTitle.Font = Enum.Font.SourceSansBold
 IntroTitle.TextSize = 36
 IntroTitle.BackgroundTransparency = 1
-IntroTitle.ZIndex = 101
+IntroTitle.ZIndex = 501
 IntroTitle.TextTransparency = 1
 
 local IntroSub = Instance.new("TextLabel", IntroFrame)
@@ -66,7 +67,7 @@ IntroSub.TextColor3 = Color3.fromRGB(200, 200, 200)
 IntroSub.Font = Enum.Font.SourceSansBold
 IntroSub.TextSize = 18
 IntroSub.BackgroundTransparency = 1
-IntroSub.ZIndex = 101
+IntroSub.ZIndex = 501
 IntroSub.TextTransparency = 1
 
 TweenService:Create(IntroFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0.35}):Play()
@@ -88,6 +89,7 @@ MainFrame.Size = defaultSize
 MainFrame.Position = UDim2.new(0.5, -220, 0.5, -160)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
+MainFrame.ZIndex = 1
 MainFrame.Active = true
 MainFrame.Draggable = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
@@ -113,7 +115,7 @@ OpenBtn.TextSize = 24
 OpenBtn.Visible = false
 OpenBtn.Active = true
 OpenBtn.Draggable = true
-OpenBtn.ZIndex = 500
+OpenBtn.ZIndex = 400
 Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 50)
 local OpenBorder = Instance.new("UIStroke", OpenBtn)
 OpenBorder.Color = Color3.fromRGB(240, 240, 240)
@@ -128,7 +130,7 @@ MinimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 MinimizeBtn.Font = Enum.Font.SourceSansBold
 MinimizeBtn.TextSize = 18
 MinimizeBtn.BorderSizePixel = 0
-MinimizeBtn.ZIndex = 3
+MinimizeBtn.ZIndex = 10
 Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(0, 50)
 
 local CloseBtn = Instance.new("TextButton", MainFrame)
@@ -140,7 +142,7 @@ CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseBtn.Font = Enum.Font.SourceSansBold
 CloseBtn.TextSize = 14
 CloseBtn.BorderSizePixel = 0
-CloseBtn.ZIndex = 3
+CloseBtn.ZIndex = 10
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 50)
 
 local isTweening = false
@@ -151,7 +153,7 @@ local function toggleUI(open)
     
     if not open then
         local targetPos = OpenBtn.Position
-        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
             Size = UDim2.new(0, 0, 0, 0),
             Position = UDim2.new(targetPos.X.Scale, targetPos.X.Offset + 27, targetPos.Y.Scale, targetPos.Y.Offset + 27)
         })
@@ -163,8 +165,8 @@ local function toggleUI(open)
             OpenBorder.Transparency = 1
             OpenBtn.Visible = true
             
-            TweenService:Create(OpenBtn, TweenInfo.new(0.2), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
-            TweenService:Create(OpenBorder, TweenInfo.new(0.2), {Transparency = 0}):Play()
+            TweenService:Create(OpenBtn, TweenInfo.new(0.15), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+            TweenService:Create(OpenBorder, TweenInfo.new(0.15), {Transparency = 0}):Play()
             isTweening = false
         end)
     else
@@ -175,7 +177,7 @@ local function toggleUI(open)
         TweenService:Create(OpenBtn, TweenInfo.new(0.15), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
         TweenService:Create(OpenBorder, TweenInfo.new(0.15), {Transparency = 1}):Play()
         
-        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        local tweenMain = TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
             Size = defaultSize,
             Position = UDim2.new(0.5, -defaultSize.X.Offset/2, 0.5, -defaultSize.Y.Offset/2)
         })
@@ -236,7 +238,7 @@ for i, tabData in ipairs(tabs) do
     TabBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
     TabBtn.Font = Enum.Font.SourceSansBold
     TabBtn.TextSize = 13
-    TabBtn.ZIndex = 3
+    TabBtn.ZIndex = 4
     Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
 
     local PageContainer = Instance.new("ScrollingFrame", MainFrame)
@@ -247,7 +249,7 @@ for i, tabData in ipairs(tabs) do
     PageContainer.CanvasSize = UDim2.new(0, 0, 0, 400)
     PageContainer.Visible = false
     PageContainer.ScrollBarThickness = 2
-    PageContainer.ZIndex = 2
+    PageContainer.ZIndex = 3
     pages[tName] = PageContainer
 
     if i == 1 then
@@ -263,6 +265,7 @@ for i, tabData in ipairs(tabs) do
             if b:IsA("TextButton") then
                 b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
                 b.TextColor3 = Color3.fromRGB(180, 180, 180)
+                b.ZIndex = 4
             end
         end
         TabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -280,7 +283,7 @@ local function createButton(tab, name, y, flag)
     b.Font = Enum.Font.SourceSansBold
     b.TextSize = 14
     b.BorderSizePixel = 0
-    b.ZIndex = 3
+    b.ZIndex = 5
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
 
     b.MouseButton1Click:Connect(function()
@@ -308,21 +311,21 @@ local function createSlider(tab, name, y, min, max, def, flag)
     lab.TextColor3 = Color3.fromRGB(200, 200, 200)
     lab.Font = Enum.Font.SourceSansBold
     lab.TextSize = 12
-    lab.ZIndex = 3
+    lab.ZIndex = 5
 
     local bg = Instance.new("Frame", pages[tab])
     bg.Size = UDim2.new(1, -20, 0, 8)
     bg.Position = UDim2.new(0, 10, 0, y + 22)
     bg.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
     bg.BorderSizePixel = 0
-    bg.ZIndex = 3
+    bg.ZIndex = 5
     Instance.new("UICorner", bg)
 
     local fil = Instance.new("Frame", bg)
     fil.Size = UDim2.new((def - min) / (max - min), 0, 1, 0)
     fil.BackgroundColor3 = Color3.fromRGB(0, 160, 100)
     fil.BorderSizePixel = 0
-    fil.ZIndex = 3
+    fil.ZIndex = 5
     Instance.new("UICorner", fil)
 
     local btn = Instance.new("TextButton", bg)
@@ -330,7 +333,7 @@ local function createSlider(tab, name, y, min, max, def, flag)
     btn.Position = UDim2.new((def - min) / (max - min), -7, 0, -3)
     btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     btn.Text = ""
-    btn.ZIndex = 4
+    btn.ZIndex = 6
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 50)
 
     local drag = false
@@ -379,7 +382,7 @@ local function createSlider(tab, name, y, min, max, def, flag)
     ab.TextColor3 = Color3.fromRGB(255, 255, 255)
     ab.Font = Enum.Font.SourceSansBold
     ab.TextSize = 13
-    ab.ZIndex = 3
+    ab.ZIndex = 5
     Instance.new("UICorner", ab).CornerRadius = UDim.new(0, 6)
 
     ab.MouseButton1Click:Connect(function()
@@ -431,7 +434,7 @@ local function createTpButton(name, y, targetMode)
     b.TextColor3 = Color3.fromRGB(230, 230, 230)
     b.Font = Enum.Font.SourceSansBold
     b.TextSize = 14
-    b.ZIndex = 3
+    b.ZIndex = 5
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
 
     b.MouseButton1Click:Connect(function()
